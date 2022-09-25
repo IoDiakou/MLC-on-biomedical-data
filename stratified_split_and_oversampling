@@ -9,8 +9,8 @@ from skmultilearn.problem_transform import BinaryRelevance
 from sklearn.ensemble import RandomForestClassifier
 import sklearn.metrics as metrics
 
-input_path = input_path_of_final_data_csv
-df = pd.read_csv(input_path, index_col=[0])
+
+df = pd.read_csv('dataset_end_ver.csv', index_col=[0])
 
 x_columns = ['AGE', 'SEX', 'INF_ANAM', 'STENOK_AN', 'FK_STENOK', 'IBS_POST', 'GB', 'SIM_GIPERT', 'DLIT_AG', 
           'ZSN_A', 'nr_11', 'nr_01', 'nr_02', 'nr_03', 'nr_04', 'nr_07', 'nr_08', 'np_01', 'np_04', 
