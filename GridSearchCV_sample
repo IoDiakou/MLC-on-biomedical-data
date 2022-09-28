@@ -17,7 +17,7 @@ parameters={'max_depth':[3,5,10,None],
 score = 'f1_micro'score #choice of scoring for the grid search
 
 def hypertune(classifier, parameters,X_train,y_train):
-    rsearch = RandomizedSearchCV(classifier, parameters, scoring = score, cv=9)
+    rsearch = RandomizedSearchCV(classifier, parameters, scoring = score, cv=9)    #cv : no of folds in stratified kfold
     
     rsearch.fit(X_train,y_train)
     hypertune_params = rsearch.best_params_
