@@ -69,27 +69,27 @@ for i, split in enumerate(splits):
         count = train_df[lbl].sum()
         full_counts[lbl] = count
 
-    counts = list(zip(full_counts.keys(), full_counts.values()))
-    counts = np.array(sorted(counts, key=lambda x:-x[1]))
-    counts = pd.DataFrame(counts, columns=['label', 'full_count'])
-    counts.set_index('label', inplace=True)
+    label_counts = list(zip(full_counts.keys(), full_counts.values()))
+    label_counts = np.array(sorted(label_counts, key=lambda x:-x[1]))
+    label_counts = pd.DataFrame(label_counts, columns=['label', 'full_count'])
+    label_counts.set_index('label', inplace=True)
 
-    counts['full_count'] = pd.to_numeric(counts['full_count'])
-    total = counts['full_count'].sum()
-    avg = int(counts['full_count'].sum())/len(labels)
+    label_counts['full_count'] = pd.to_numeric(counts['full_count'])
+    total = label_counts['full_count'].sum()
+    avg = int(label_counts['full_count'].sum())/len(labels)
     #print(avg)
 
-    def set_sample_ratio(x):
+    def find_sample_ratio(x):
         x = int(x)
         if x >= avg: return 1
         else: return int(np.round(avg / x))
 
-    counts['calculated_oversampling_ratio'] = counts['full_count'].apply(set_sample_ratio)
+    label_counts['oversampling_ratio'] = label_counts['full_count'].apply(find_sample_ratio)
 
     def get_sample_ratio(row):
         ratio = 1
         for l in labels:
-            r = counts.calculated_oversampling_ratio.loc[l]
+            r = label_counts.oversampling_ratio.loc[l]
             if r > ratio: ratio = r
         return ratio
         
@@ -108,7 +108,7 @@ for i, split in enumerate(splits):
     
     #print(X_train.shape)
     
-
+    # choosing the classifier and transformation method, for example BinaryRelevance
     classifier = BinaryRelevance(
         classifier = RandomForestClassifier(),
         require_dense = [False, True]
@@ -118,7 +118,7 @@ for i, split in enumerate(splits):
 
     y_hat=classifier.predict(X_test)
 
-
+    # calling the metrics, for example f1 score and hamming loss
     br_f1=metrics.f1_score(y_test, y_hat, average='micro')
     br_hamm=metrics.hamming_loss(y_test,y_hat)
     print('split number:', i)
