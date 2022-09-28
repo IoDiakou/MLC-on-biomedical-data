@@ -1,0 +1,27 @@
+""" Sample of doing a grid search for optimal parameters of the classifier 
+"""
+
+from sklearn.ensemble import RandomForestClassifier
+import sklearn.metrics as metrics
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint
+
+classifier = RandomForestClassifier(n_jobs=-1)   # n_jobs = -1 --> using all processors
+parameters={'max_depth':[3,5,10,None],
+              'n_estimators':[10,100,200,300,400,500],
+              'max_features':randint(1,3),
+               'criterion':['gini','entropy'],
+               'bootstrap':[True,False],
+               'min_samples_leaf':randint(1,4),
+              }
+score = 'f1_micro'score #choice of scoring for the grid search
+
+def hypertune(classifier, parameters,X_train,y_train):
+    rsearch = RandomizedSearchCV(classifier, parameters, scoring = score, cv=9)
+    
+    rsearch.fit(X_train,y_train)
+    hypertune_params = rsearch.best_params_
+    hypertune_score = rsearch.best_score_
+    return hypertune_params, hypertune_score
+
+classifier_parameters, classifier_score = hypertune(classifier, parameters, X_train, y_train)
